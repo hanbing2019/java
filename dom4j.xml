@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employees>
+<employee id="0001" name="wanglp">
+<sex>m</sex>
+<age>25</age>
+</employee>
+<employee id="0002" name="fox">
+<sex>f</sex>
+<age>24</age>
+</employee>
+</employees>

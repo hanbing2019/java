@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 标签模板 <!ELEMENT elementName (childElement,childElement,childElement)> -->
+<!-- <!ELEMENT >固定内容 -->
+<!-- elementName 标签名称-->
+<!-- childElement子标签，子标签数量不定，根据情况添加，子标签之间使用逗号,或者竖线|分开，子标签放在括号内()-->
+<!-- 左括号和elementName之间必须有一个空格-->
+<!-- #PCDATA表示标签内容只能是文本数据，不能再嵌套子标签-->
+<!--EMPTY表示空标签，标签不含其他子标签和文本 关键字不用圆括号 -->
+
+<!--标签重现操作符  （通常在标签设置子标签的时候使用，直接放在子标签后面）
+1.默认[default]标签，就是不使用操作符，表示必须出现一次
+2.？表示必须出现一次或者不出现
+3.+表示必须至少出现一次
+4.*可以出现或者不出现-->
+<!ELEMENT myxml (NODED,bibi,CD?,name)>
+<!ELEMENT NODED (constructor?,id*,result*,association*,collection*, discriminator?)>
+<!ELEMENT bibi (#PCDATA)>
+<!ELEMENT constructor (id,nn)>
+<!ELEMENT result EMPTY>
+<!ATTLIST result 
+ok CDATA #REQUIRED
+column CDATA #IMPLIED
+no CDATA #IMPLIED >
+<!--定义标签属性 -->
+<!--模板<!ATTLIST [Enclosing element] [attribute name] [type] [modifier]>
+[Enclosing element]定义属性的标签，
+[attribute name]定义的属性名称
+[type] 使用关键字CDATA表示字符数据
+[modifier]表示是否使用属性，有一下三个关键字来表示： #IMPLIED #REQUIRED #FIXED
+#REQUIRED表示xml文档中必须使用属性，
+#IMPLIED表示当没有属性值时，可以不使用该属性，
+#FIXED表示不能修改属性的取值，一般不使用这个关键字
+-->

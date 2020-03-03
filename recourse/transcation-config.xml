@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        ">
+        
+<!-- 事务管理 -->
+<!-- JDBC事务管理 使用DataSourceTransactionManager来管理事物-->  
+ <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+     <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+     <property name="url" value="jdbc:mysql:///test"></property>
+     <property name="username" value="root"></property>
+     <property name="password" value="12345"></property>
+  </bean>
+  <!-- 申明式事物管理 -->
+  <!-- 事物管理器 -->
+   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+     <property name="dataSource" ref="dataSource"></property>
+    </bean>  
+   
+	<!-- transaction-manager="transactionManager"可以不用配置，前提事务管理器的id必须定义transactionManager -->
+	<!-- spring默认找id=transactionManager的事务管理器 -->
+	<!-- 事务属性 -->
+	<tx:advice id="txAdvice">
+		<tx:attributes>
+			<!-- 如果希望get方法或者find方法是只读事务 -->
+			<!-- 这一事务属性表明，如果业务方法在某个事务范围内被调用，则方法成为该事务的一部分。 -->
+			<!-- 如果业务方法在事务范围外被调用，则方法在没有事务的环境下执行 -->
+			<!-- 如果执行的方法有事务就是只读事务，如果没有事务就是没有事务 -->
+<!-- 			<tx:method name="get*" read-only="true" propagation="SUPPORTS" /> -->
+<!-- 			<tx:method name="find*" read-only="true" propagation="SUPPORTS" /> -->
+			<!-- 其他事务就使用默认配置 ,默认的配置必须放到最后面 -->
+			
+			<!-- REQUIRED表示当前如果有事务就加入，没有就新建一个事务
+			     SUPPORTS当前事务存在就加入，不存在就创建一个空事务
+			 -->
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+   
+   <!-- aop切入点：expression配置需要管理的类的方法 -->
+   <!-- 配置了这个才会使用spring的事务管理 -->
+	<aop:config>
+		<aop:pointcut id="serviceOperation"
+			expression="execution(* spring.tranc.JDBCDao.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+	</aop:config>
+   
+  <bean id="jDBCDao" class="spring.tranc.JDBCDaoImpl">
+  <property name="jdbcTemplate" ref="jdbcTemplate"/>
+  <property name="dataSource" ref="dataSource"/>
+  </bean>
+  <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+  <property name="dataSource" ref="dataSource"/>
+  </bean>
+    
+</beans>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        ">
+        
+   
+   <!-- beans整个配置文件的根节点 --> 
+   <!--xmlns="http://www.springframework.org/schema/beans" -->
+   <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
+   <!-- 上面2个是最基本的命名空间 -->
+   <!--xsi:schemaLocation="..."配置与命名空间相对于的scheme文件路径 -->
+   <!-- 配置javabean -->
+   <!-- id为实例名称  class是全类名   -->
+   <!-- scope:当没配置的时候默认为  scope="singleton" 表示spring启动后只会创建一个实例对象，
+             当配置为scope="prototype" 表示spring启动后每次获取的实例对象都是新建的 -->
+   
+   <bean id="testDao" class="spring.dao.TestDao" >
+   <constructor-arg>
+   </constructor-arg>
+   <!-- 在TestDao中定义 JdbcTemplate对象提供getter和setter,通过调用jdbcTemplate-->
+   <property name="jdbcTemplate" ref="jdbcTemplate"/>
+   <property name="dataSource" ref="dataSource" />
+   </bean>
+   <!--  init-method=""spring启动的时候自动执行的方法，destroy-method表示对象销毁时执行的方法 -->
+   <bean id="user" class="spring.User" scope="singleton"  destroy-method="" >
+   <!-- property 表示给当前类的name属性赋值   ref表示给引入实体变量赋值  value表示给基本类型赋值-->
+   <property name="testDao" ref="testDao"/>
+   <property name="name" value="tom"/>
+   <!-- <list></list>给当前类的list属性赋值 <value></value>中间为初始化的值-->
+   <property name="info">
+   <list>
+    <value>123</value>
+    <value>student</value>
+    <value>ddd</value>
+   </list>
+   </property>
+   <!-- <map></map>给当前类的map属性赋值 entry的可以为map的键，value为放入map的值 -->
+   <property name="map">
+   <map>
+   <entry key="map">
+   <value>addinfo</value>
+   </entry>
+   </map>
+   </property>
+   </bean> 
+   <!-- 模仿连接数据库 -->
+   <!--  <bean id="miniJDBC" class="spring.dao.MiniJDBC">
+   <property name="driverClassName" value="org.gjt.mm.mysql.Driver"></property>
+   <property name="url" value="jdbc:mysql:///test"></property>
+   <property name="username" value="root"></property>
+   <property name="password" value="12345"></property>
+   </bean>-->
+   
+      <!-- 读取properties文件 -->
+      <!-- <context:property-placeholder location="jdbc.properties"/> -->
+   
+   <!-- spring包提供的通过jdbc来连接数据库的bean,DriverManagerDataSource有获取连接对象的方法 -->
+     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+     <property name="driverClassName" value="org.gjt.mm.mysql.Driver"></property>
+     <property name="url" value="jdbc:mysql:///test"></property>
+     <property name="username" value="root"></property>
+     <property name="password" value="12345"></property>
+    </bean> 
+    <!--JdbcTemplate提供了spring封装对jdbc操作数据库方法的， -->
+    <!--JdbcTemplate提供了5个方法来操作数据库 1execute，可用于处理ddl语句 2update和batchupdate 可以处理新增修改查询等sql语句，batchupdate用于批量操作 3call操作存储过程  -->
+      <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean> 
+
+</beans>

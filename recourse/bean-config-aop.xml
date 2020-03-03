@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        ">
+        <context:component-scan base-package="spring.aop.xml"/>
+        <!--  切面类bean -->
+      <bean id="ainfo" class="spring.aop.xml.AspectInfo"/>
+      <aop:config>
+               <!--   定义切面 -->
+         <aop:aspect ref="ainfo">
+                  <!-- 定义连接点 -->
+            <aop:pointcut expression="execution(* spring.aop.xml.Dealfunc.*(..))" id="dfunc"/> 
+            <aop:before method="before" pointcut-ref="dfunc"/> 
+            <aop:after method="after" pointcut-ref="dfunc"/>
+         </aop:aspect>
+      </aop:config> 
+      
+      <!-- <bean id="tc" class="spring.aop.xml.TraceCounter"></bean>
+      <aop:config>
+        <aop:aspect ref="tc">
+          <aop:pointcut expression="execution(* spring.aop.xml.Dealfunc.func2(int,String)) and args(traceNumber,str)" id="dff"/>
+          <aop:before method="countTrace" pointcut-ref="dff"/>
+        </aop:aspect>
+      
+      </aop:config>
+      
+      <bean class="arg.springframework.web.servlet.view.InternalResourceViewResolver">
+       <property name="prefix" value="/WEB-INFO/views/"/>
+       <property name="suffix" value=".jsp"/>
+      </bean> -->
+</beans>

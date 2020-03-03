@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/jms
+		http://www.springframework.org/schema/jms/spring-jms.xsd
+		http://www.springframework.org/schema/rabbit
+     	http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+        ">
+	<!-- 配置连接工厂，这就配置好了，但是需要配置一个id,好让之后的bean组件使用 默认情况下 RabbitMQ服务器监听localhost的5672端口，并且用户名和密码都是guest -->
+	<!-- <rabbit:connection-factory id="connectionFactory"/> -->
+	<!-- host配置服务器ip,port配置端口 username配置用户名，password配置密码 -->
+	<rabbit:connection-factory id="connectionFactory"
+		host="" port="" username="" password="" />
+	<!-- 声明一个简单消息 -->
+	<!-- <rabbit:admin connection-factory="connectionFactory"/> <rabbit:queue 
+		name="myqueue" id="myqueue"/> -->
+
+
+	<rabbit:admin connection-factory="connectionFactory" />
+	<!-- 创建2个队列 -->
+	<rabbit:queue name="myqueue1" id="myqueue1" />
+	<rabbit:queue name="myqueue2" id="myqueue2" />
+
+	<!-- 定义fanout的exchange，在 rabbit:bindings绑定队列myqueue1 -->
+	<rabbit:fanout-exchange name="fanout">
+		<rabbit:bindings>
+			<rabbit:binding queue="myqueue1"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:fanout-exchange>
+	<!-- 定义direct的exchange，在 rabbit:bindings绑定队列myqueue2 -->
+	<rabbit:direct-exchange name="direct">
+		<rabbit:bindings>
+			<rabbit:binding queue="myqueue2"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	<!-- 配置RabbitTemplate ,之后就可以在代码中注入 -->
+	<rabbit:template id="rabbitTemplate"
+		connection-factory="connectionFactory" />
+
+	<rabbit:template id="rabbitTemplate"
+		connection-factory="connectionFactory" exchange="" routing-key="" />
+
+<!-- 定义一个处理监听bean -->
+	<bean id="rabbitListener" class="spring.rabbit.RabbitListener"></bean>
+	<!-- 配置监听 
+	connection-factory配置连接工厂
+	rabbit:listener监听关联到处理监听的bean,queues配置监听的队列，method处理监听的方法
+	-->
+	<rabbit:listener-container
+		connection-factory="connectionFactory">
+		<rabbit:listener ref="rabbitListener" method="onMessage"
+			queues="myqueue1" />
+	</rabbit:listener-container>
+
+</beans>

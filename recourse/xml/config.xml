@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<config>
+   <debug>true</debug>
+   <ficonfig>
+	   <appname desc="应用系统名称">财务管理系统</appname>
+	   <sitename desc="站点名称">泸州市商业银行</sitename>
+	   <jsp encoding="ISO8859-1" desc="当前JSP容器缺省编码"/>
+   </ficonfig>
+
+   <!-- 报表服务器配置 -->
+   <reportserver URL="http://192.168.221.55/lycb/">
+	  <!-- 分析报表服务器 -->
+	  <bireport URL="http://ssrs.nccb.com/ReportServer/logon.aspx?ReturnUrl=/ReportServer/Pages/ReportViewer.aspx?">
+	  	<pwd enable="false" encrypt="false" />
+	  </bireport>
+   </reportserver>
+   
+    <!-- 外围系统交易信息文本格式属性配置 -->
+    <tranconf>
+		<linefeed desc="文件类型，主要区分回车换行的标识，windows(win)文件为\r\n，linux/unix(ux)为\n" default="win" option="win,ux">ux</linefeed>
+		<splitChar  desc="文件分隔符">!~!</splitChar>
+		<charSet desc="字符集">GBK</charSet>
+	</tranconf>
+   
+   
+   <!-- 文件服务配置 -->
+   <fileservice>
+      <!-- type="DB"数据库 type="FILE"磁盘文件相对SUNLINE_PATH路径-->
+      <repository type="DB"  destination="../../upload" />
+      <!-- 上传文件的最大大小(byte) -->
+      <maxsize>0</maxsize>
+      <!-- 上传文件时最大占用内存大小(byte),超过时存在磁盘文件路径 -->
+      <sizethreshold>10240</sizethreshold>
+   </fileservice>
+   
+   
+   <ftpserver>
+   		<fundserver>
+   			<host desc="FTP主机地址">192.16.21.48</host>
+   			<port desc="端口">22</port>
+   			<username desc="登陆用户">eosftp</username>
+   		    <userpwd desc="登陆密码">eosftp</userpwd>
+   		    <fincSend desc="上传文件路径">/home/eosftp/batsy</fincSend>
+   		    <lttsBatPath desc="前置推送文件路径">/home/eosftp/recv</lttsBatPath>
+   		    <!--localFinc desc="本地文件路径">d:\\</localFinc-->
+   		    <localFinc desc="本地文件路径">/home/eosftp/batsy/recv/</localFinc>
+   		</fundserver>
+   </ftpserver>
+   
+   <ygzftpserver>
+   		<fundserver>
+   			<host desc="FTP主机地址">192.16.21.48</host>
+   			<port desc="端口">22</port>
+   			<username desc="登陆用户">eosftp</username>
+   		    <userpwd desc="登陆密码">eosftp</userpwd>
+   		    <!-- fincSend desc="上传文件路径">D:\\LIU_BO\\home\\eosftp\\batsy</fincSend -->
+   		    <fincSend desc="上传文件路径">/share/ygz/recv/cw</fincSend>
+   		    <!--localFinc desc="本地文件路径">d:\\</localFinc-->
+   		    <localFinc desc="本地文件路径">/home/eosftp/batsy/recv/</localFinc>
+   		</fundserver>
+   </ygzftpserver>
+   
+   <imsfileserver>
+		<filedownload>
+			<downloadpath desc="影像下载路径">/imscardhtml/</downloadpath>
+		</filedownload>	
+		<fileupload>
+			<host desc="影像批次上传地址">192.16.22.64</host>
+			<socketPort desc="socket端口">8023</socketPort>
+			<httpPort desc="http端口">9080</httpPort>
+			<modelCode desc="内容模型代码">CWXT</modelCode>
+			<userName desc="用户名">admin</userName>
+			<passWord desc="密码">111</passWord>
+			<appid>SunFT</appid>
+			<tradecode>FLOW</tradecode>
+		</fileupload>
+   </imsfileserver>
+
+   <gtpserver>
+		<acct>
+			<fincRecv desc="接收文件路径">
+				<DownDir0 desc="目录0">/app/was/app/txt/online/request/</DownDir0>
+			</fincRecv>
+			<fincRecvProc desc="发送文件备份路径">
+				<UpDir0 desc="目录0">/app/was/app/txt/online/proc/response/</UpDir0>
+			</fincRecvProc>
+			<fincRecvProc desc="接收文件备份路径">
+				<DownDir0 desc="目录0">/app/was/app/txt/online/proc/request/</DownDir0>
+			</fincRecvProc>
+			<localFinc desc="本地文件路径">
+				<LocalDir0 desc="目录0">/app/was/app/txt/online/request/</LocalDir0>
+			</localFinc>
+		</acct>
+		<glis>
+			<fincSend desc="上传文件路径">
+				<UpDir0 desc="目录0">/UpDir0/</UpDir0>
+			</fincSend>
+			<fincRecv desc="下载文件路径">
+				<DownDir0 desc="目录0">/DownDir0/</DownDir0>
+			</fincRecv>
+			<localFinc desc="本地文件路径"><!--财务日终后传票数据给总账  -->
+				<LocalDir0 desc="本地上传目录">/app/was/sunglServer/txt/batch/acct/request/</LocalDir0>
+			</localFinc>
+		</glis>
+		<ltts>
+			<host desc="GTP主机地址">213.145.101.10</host>
+			<port desc="端口">10254</port>
+			<username desc="登陆用户">sunfi</username>
+			<userpwd desc="登陆密码">sunfi</userpwd>
+			<!-- 单位(秒)，必须大于30秒，若小于0时，默认为-1，则表示不超时 -->
+			<loginSec desc="会话超时时间">-1</loginSec>     		
+			<responseTimeout desc="应答等待超时时间"></responseTimeout>
+			<overwrite desc="是否覆盖同名文件"></overwrite>
+			<createDir  desc="是否创建不存在的目录"></createDir>
+			<transSubDir desc="是否上传子目录"></transSubDir>
+			<cryptMethod desc="加密方式"></cryptMethod>
+			<!-- 0：未加密、未压缩  1：只加密，未压缩-->
+			<cryptCompress desc="文件加密、压缩标识" ></cryptCompress>
+			<!-- 取值范围等于1，小于等于2048。缺省1 -->
+			<serviceID desc="出口业务标识"></serviceID>
+			<fincSend desc="上传文件路径">
+				<UpDir0 desc="目录0">/UpDir0/</UpDir0>
+			</fincSend>
+			<fincRecv desc="下载文件路径">
+				<DownDir0 desc="目录0">/DownDir0/</DownDir0>
+			</fincRecv>
+			<localFinc desc="本地文件路径">
+				<LocalDir0 desc="本地上传目录">/app/was/sunfiServer/txt/online/ltts/response/</LocalDir0>
+			</localFinc>
+		</ltts>
+		<!-- 前置机 -->
+		<bfrs>
+			<host desc="GTP主机地址">213.145.107.10</host>
+			<port desc="端口">10254</port>
+			<username desc="登陆用户">sunline</username>
+			<userpwd desc="登陆密码">sunline</userpwd>
+			<!-- 单位(秒)，必须大于30秒，若小于0时，默认为-1，则表示不超时 -->
+			<loginSec desc="会话超时时间">-1</loginSec>     		
+			<responseTimeout desc="应答等待超时时间"></responseTimeout>
+			<overwrite desc="是否覆盖同名文件"></overwrite>
+			<createDir  desc="是否创建不存在的目录"></createDir>
+			<transSubDir desc="是否上传子目录"></transSubDir>
+			<cryptMethod desc="加密方式"></cryptMethod>
+			<!-- 0：未加密、未压缩  1：只加密，未压缩-->
+			<cryptCompress desc="文件加密、压缩标识" ></cryptCompress>
+			<!-- 取值范围等于1，小于等于2048。缺省1 -->
+			<serviceID desc="出口业务标识"></serviceID>
+			<fincSend desc="上传文件路径">
+				<UpDir0 desc="目录0">/UpDir0/</UpDir0>
+			</fincSend>
+			<fincRecv desc="下载文件路径">
+				<DownDir0 desc="目录0">/DownDir0/</DownDir0>
+			</fincRecv>
+			<localFinc desc="本地文件路径">
+				<LocalDir0 desc="本地上传目录">/app/was/sunfiServer/txt/online/bfrs/response/</LocalDir0>
+			</localFinc>
+		</bfrs>
+		<!-- 财务系统税金数据采集 -->
+		<sunfi>
+			<localFinc desc="本地文件路径">
+				<LocalDir0 desc="目录0">/app/was/app/txt/online/request/</LocalDir0>
+			</localFinc>
+		</sunfi>
+	</gtpserver>
+</config>

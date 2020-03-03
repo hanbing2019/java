@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        ">
+        <context:annotation-config/>
+  <bean id="book" class="spring.Book"></bean>
+  <bean id="toltal" class="spring.Toltal" autowire="byName">
+<!--   <property name="book" ref="book"/> -->
+  </bean>
+  
+  
+  <bean id="autoByName" class="spring.AutoByName"/>
+  
+  <bean id="schedual" class="spring.SchedualInfo" scope="prototype"/>
+<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject" ref="schedual"/>
+  <property name="targetMethod" value="func"/>
+  <property name="concurrent" value="false"/>
+</bean>
+<bean id="crontrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+<property name="jobDetail" ref="jobDetail"/>
+<!-- quartz时间配置规则 -->
+<property name="cronExpression" value="*/5 * * * * ?"/>
+</bean>
+<bean id="sche" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+<property name="triggers">
+<list>
+   <ref bean="crontrigger"/>
+</list>
+</property>
+<property name="autoStartup" value="true"/>
+</bean>
+
+</beans>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE myxml PUBLIC "myxml" "java/recourse/mydtd.dtd">
+
+<!-- myxml1 namespace 和dtd定义的最上级标签一样 -->
+<!-- PUBLIC 引入dtd的key type  "myxml" 为定义的别名-->
+<!--"java/recourse/mydtd.dtd" dtd文件的路径  -->
+<!-- 修改了dtd的内容后，重启ide修改后的提示信息才会展示出来 -->
+<myxml>
+<NODED>
+<constructor>
+<id/>
+<nn/>
+</constructor>
+<result ok="s" no="" column=""/>
+</NODED>
+<bibi>12</bibi>
+<name/>
+</myxml>

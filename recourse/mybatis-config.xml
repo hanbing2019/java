@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 配置文件configuration根元素 -->
+<configuration>
+<!-- 配置加载properties文件  获取数据-->
+<properties resource="test.properties">
+  <!-- 通过 properties 元素的子元素来传递 -->
+ <property name="driver" value="com.mysql.jdbc.Driver"/>
+ <property name="url" value="jdbc:mysql:///test1"/>
+</properties>
+<!-- 然后其中的属性就可以在整个配置文件中被用来替换需要动态配置的属性值 -->
+<!-- 比如
+<dataSource type="POOLED">
+  <property name="driver" value="${driver}"/>
+  <property name="url" value="${url}"/>
+  <property name="username" value="${username}"/>
+  <property name="password" value="${password}"/>
+</dataSource>
+这个例子中的 username 和 password 将会由 properties 元素中设置的相应值来替换。 
+driver 和 url 属性将会由 config.properties 文件中对应的值来替换。这样就为配置提供了诸多灵活选择
+ -->
+
+<!-- 配置基本属性 下面配置的属性是mybatis比较完整的配置，但是不全，其他的配置通常默认就可以 -->
+<settings>
+<!-- 该配置影响的所有映射器中配置的缓存的全局开关。  value为true或者false 默认为true -->
+<setting name="cacheEnabled" value="true"/>
+<!-- 延迟加载：需要数据的时候才去操作数据,减少系统开销  默认false -->
+<setting name="lazyLoadingEnabled" value="true"/>
+<!-- 单一语句返回多个结果集  -->
+<setting name="multipleResultSetsEnabled" value="true"/>
+<!-- 使用列标签代替列名 -->
+  <setting name="useColumnLabel" value="true"/>
+  <!-- 允许 JDBC 支持自动生成主键，需要驱动兼容。 
+  如果设置为 true 则这个设置强制使用自动生成主键，尽管一些驱动不能兼容但仍可正常工作 -->
+  <setting name="useGeneratedKeys" value="false"/>
+  <!-- 指定 MyBatis 应如何自动映射列到字段或属性。
+   NONE 表示取消自动映射；
+   PARTIAL 只会自动映射没有定义嵌套结果集映射的结果集。
+   FULL 会自动映射任意复杂的结果集 -->
+  <setting name="autoMappingBehavior" value="PARTIAL"/>
+  <!-- 指定发现自动映射目标未知列（或者未知属性类型）的行为。
+        NONE: 不做任何反应
+        WARNING: 输出提醒日志 ('org.apache.ibatis.session.AutoMappingUnknownColumnBehavior' 的日志
+
+等级必须设置为 WARN)
+        FAILING: 映射失败 (抛出 SqlSessionException) -->
+  <setting name="autoMappingUnknownColumnBehavior" value="WARNING"/>
+<!--   配置默认的执行器。
+SIMPLE 就是普通的执行器；
+REUSE 执行器会重用预处理语句（prepared statements）；
+ BATCH 执行器将重用语句并执行批量更新 -->
+  <setting name="defaultExecutorType" value="SIMPLE"/>
+<!--   设置超时时间，它决定驱动等待数据库响应的秒数。 -->
+  <setting name="defaultStatementTimeout" value="25"/>
+<!--   为驱动的结果集获取数量（fetchSize）设置一个提示值。此参数只可以在查询设置中被覆盖。 -->
+  <setting name="defaultFetchSize" value="100"/>
+<!--   允许在嵌套语句中使用分页（RowBounds）。 If allow, set the false.  false表示允许-->
+  <setting name="safeRowBoundsEnabled" value="false"/>
+<!--   是否开启自动驼峰命名规则（camel case）映射，
+即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。false不开启 -->
+  <setting name="mapUnderscoreToCamelCase" value="false"/>
+  
+<!--   MyBatis 利用本地缓存机制（Local Cache）防止循环引用（circular references）和加速重复嵌套查询
+
+。
+ 默认值为 SESSION，这种情况下会缓存一个会话中执行的所有查询。 
+ 若设置值为 STATEMENT，本地会话仅用在语句执行上，对相同 SqlSession 的不同调用将不会共享数据 -->
+  <setting name="localCacheScope" value="SESSION"/>
+<!--   当没有为参数提供特定的 JDBC 类型时，
+为空值指定 JDBC 类型。 某些驱动需要指定列的 JDBC 类型，
+多数情况直接用一般类型即可，比如 NULL、VARCHAR 或 OTHER。 -->
+  <setting name="jdbcTypeForNull" value="OTHER"/>
+<!--   指定哪个对象的方法触发一次延迟加载。 -->
+  <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
+</settings>
+
+<!-- 配置java对象的别名 简化类的权限的名-->
+<typeAliases>
+<typeAlias type="mybatis.User" alias="user"/>
+<typeAlias type="mybatis.TestInfo" alias="tinfo"/>
+<typeAlias type="mybatis.MaxInfo" alias="minfo"/>
+</typeAliases>
+
+<!-- 用来解决数据库中的类型和java的类型之间转换的 -->
+<!-- 类mybatis.handler.TypeHandler继承了BaseTypeHandler，用于将转数据库类型为java类型，数据的读取都会被这个类过滤
+ 在改类的头上使用@MappedJdbcTypes({JdbcType.数据库类型  })和@MappedTypes({java类型})2个标签分别表示将要转换的类型
+@MappedJdbcTypes定义的是JdbcType类型，这里的类型不可自己随意定义，必须要是枚举类org.apache.ibatis.type.JdbcType所枚举的数据类型
+@MappedTypes定义的是JavaType的数据类型，描述了哪些Java类型可被拦截
+在setNonNullParameter方法中，我们重新定义要写往数据库的数据。
+在另外三个方法中将从数据库读出的数据类型进行转换，得到java类型。 
+-->
+<!--  <typeHandlers>
+<typeHandler handler="mybatis.handler.TypeHandler"/>
+<typeHandler handler="mybatis.handler.MyHandler"/>
+</typeHandlers> -->
+
+<plugins>
+<plugin interceptor="mybatis.plugin.PageInterceptor">
+<property name="dataType" value="mysql"/>
+</plugin>
+</plugins>
+
+<!--默认环境的id default的值：development（开发模式）、work(工作模式) -->
+<environments default="development">
+<!-- 环境id，默认环境的id和环境id必须相同 -->
+<environment id="development">
+<!-- 配置控制事务的方式 ，有2中方式JDBC和MANAGED -->
+<!-- jdbc 使用jdbc的提交和事物回滚方式-->
+<!-- managed：这个配置是将事务管理交给其他容器来管理，比如spring -->
+<!-- 默认情况下他会关闭连接，然而一些容器并不希望这样，因此需要将closeConnection属性设置为false来阻止它默认的关闭行为 -->
+<transactionManager type="JDBC"/>
+<!-- 配置连接数据库实例的数据源 -->
+<!-- 三种内建的数据源类型：type=[ UNPOOLED | POOLED | JNDI ] -->
+<!-- UNPOOLED：表示每次请求时打开和关闭连接，适合比较简单的应用程序 -->
+<!-- POOLED 类似连接池这个概念 -->
+<!-- JDNI- 这个数据源的实现是为了能在如EJB或应用服务器这类容器中使用，-->
+<!-- 容器可以集中在外部配置数据源，然后放置一个JDNI上下文的引用 -->
+
+<!-- 这种数据源只需要两个属性：
+initial_context - 这个属性用来InitailContext中寻找上下文（即，initialContext.lookup(initial_context)）。
+这是个可选属性，如果忽略，那么 data_source 属性将会直接从 InitialContext 中寻找
+data_source - 这是引用数据源实例位置的上下文的路径。
+提供了 initial_context 配置时会在其返回的上下文中进行查找，没有提供时则直接在 InitialContext 中查找
+和其他数据源配置类似 -->
+<dataSource type="POOLED">
+<property name="driver" value="${driver}"/>
+<property name="url" value="${url}"/>
+<!-- <property name="driver" value="com.mysql.jdbc.Driver"/>
+<property name="url" value="jdbc:mysql:///test"/>
+<property name="username" value="root"/>
+<property name="password" value="12345"/> -->
+<property name="username" value="${username}"/>
+<property name="password" value="${password}"/>
+</dataSource>
+</environment>
+</environments>
+
+<!-- 配置sql语句映射器 -->
+<!-- SQL 映射文件 -->
+ <mappers> 
+ <mapper resource="mapping/user.xml"/> 
+</mappers> 
+</configuration>
